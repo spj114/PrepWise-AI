@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocChat - AI Study Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>"> <!-- Basic Favicon -->
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar for document management -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <i class="fas fa-brain logo-icon"></i> <!-- Changed Icon -->
+                <h1>DocChat AI</h1>
+            </div>
+
+            <div class="upload-section">
+                <h2>1. Upload Documents</h2>
+                <div class="upload-box" id="upload-box">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p>Drag & drop files here or</p>
+                    <label for="file-input" class="upload-btn">Browse Files</label>
+                    <input type="file" id="file-input" multiple style="display:none;" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg">
+                    <p class="file-types-note">Supports: PDF, Word, Excel, PowerPoint, Images (JPG, PNG)</p>
+                </div>
+
+                <div class="file-list-container">
+                    <h3>Selected Files:</h3>
+                    <ul id="file-list" class="file-list">
+                        <!-- Files will be listed here by JS -->
+                    </ul>
+                </div>
+
+                <h2>2. Process Files</h2>
+                <button id="process-btn" class="process-btn" disabled>
+                    <i class="fas fa-cogs"></i> Process Documents
+                </button>
+
+                 <div class="progress-container" id="processing-progress-section">
+                    <div class="progress-bar" id="progress-bar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                    <div id="status-text" class="status-text">Select files and click Process</div>
+                </div>
+
+                <!-- Study Plan Section -->
+                <div class="study-plan-section" id="study-plan-section" style="display: none;"> <!-- Initially hidden -->
+                    <h2>3. Study Plan Checklist</h2>
+                    <div class="plan-progress-container">
+                        <div class="plan-progress-bar">
+                            <div class="plan-progress" id="plan-progress"></div>
+                        </div>
+                        <span class="plan-progress-text" id="plan-progress-text">0% Complete</span>
+                    </div>
+                    <ul id="study-plan-list" class="study-plan-list">
+                        <!-- Study plan items will be dynamically loaded here -->
+                        <li>Processing files to generate plan...</li>
+                    </ul>
+                </div>
+                <!-- End of Study Plan Section -->
+
+            </div> <!-- End of upload-section -->
+
+        </aside> <!-- End of sidebar -->
+
+        <!-- Main chat area -->
+        <main class="main-content">
+            <header class="chat-header">
+                <h2>Chat with your Documents</h2>
+                <div class="chat-actions">
+                    <div class="answer-type-selector">
+                        <label for="answer-type">Answer Style:</label>
+                        <select id="answer-type">
+                            <option value="Explanatory">Explanatory</option>
+                            <option value="Concise">Concise</option>
+                            <option value="Cheat Sheet">Cheat Sheet</option>
+                            <option value="Exam-Ready">Exam-Ready</option>
+                        </select>
+                    </div>
+                    <button id="export-btn" class="export-btn" disabled title="Export Chat History">
+                        <i class="fas fa-download"></i> Export Chat
+                    </button>
+                </div>
+            </header>
+
+            <div class="chat-container" id="chat-container">
+                <!-- Initial Welcome Message -->
+                <div class="message system-message">
+                    <div class="message-content">
+                        <p><strong>Welcome to DocChat AI!</strong></p>
+                        <p>1. Upload your study materials (PDFs, Word docs, etc.) using the sidebar.</p>
+                        <p>2. Click "Process Documents". The AI will analyze them and create a study plan checklist.</p>
+                        <p>3. Ask questions about your documents below!</p>
+                        <p>Use the "Answer Style" dropdown to control how the AI responds.</p>
+                    </div>
+                </div>
+                <!-- Chat messages will appear here -->
+            </div>
+
+            <footer class="chat-input-container">
+                <textarea id="chat-input" class="chat-input" placeholder="Ask a question about your documents..." disabled rows="1"></textarea>
+                <button id="send-btn" class="send-btn" disabled title="Send Message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </footer>
+        </main> <!-- End of main-content -->
+    </div> <!-- End of container -->
+
+    <!-- Export format selection modal -->
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" title="Close">&times;</span>
+            <h2>Export Chat As...</h2>
+            <form id="export-form">
+                <div class="export-options">
+                    <div class="export-option">
+                        <input type="radio" id="format-md" name="export-format" value="markdown" checked>
+                        <label for="format-md">Markdown (.md)</label>
+                    </div>
+                    <div class="export-option">
+                        <input type="radio" id="format-html" name="export-format" value="html">
+                        <label for="format-html">HTML (.html)</label>
+                    </div>
+                    <div class="export-option">
+                        <input type="radio" id="format-txt" name="export-format" value="text">
+                        <label for="format-txt">Plain Text (.txt)</label>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" id="export-confirm-btn" class="btn primary-btn">
+                        <i class="fas fa-file-export"></i> Export
+                    </button>
+                    <button type="button" id="export-cancel-btn" class="btn secondary-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
