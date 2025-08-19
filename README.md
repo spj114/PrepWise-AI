@@ -22,12 +22,12 @@
 PrepWise-AI is a cutting-edge study assistant that transforms your documents into interactive learning experiences. Upload your study materials, get AI-generated study plans, and chat with your documents using advanced natural language processing.
 
 ### Main Interface
-![PrepWise-AI Interface](Images\Main_Interface.jpeg)
+![PrepWise-AI Interface](Images/Main_Interface.jpeg)
 *Upload documents, process them, and interact with your personalized study plan*
 
 ### Chat Interface
-![Chat Interface](Images\QnA_1.jpeg)
-![Chat Interface](Images\QnA_2.jpeg)
+![Chat Interface](Images/QnA_1.jpeg)
+![Chat Interface](Images/QnA_2.jpeg)
 *Ask questions about your documents and get intelligent, contextual responses*
 
 ### 🌟 What Makes PrepWise-AI Special?
